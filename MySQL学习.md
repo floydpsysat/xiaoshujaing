@@ -226,8 +226,135 @@ NOT class_id=2 等价于class_id <> 2
 ----|----|----
 =|name='abc'|字符串需要用单引号括起来
 <|name<'abc'|字符串比较使用ASCII码，中文字符根据数据库设置
->|name>'abc'|
+\>|name>'abc'|
 <=|小于等于
 >=|大于等于
 使用<>判断不相等|name<>'abc'  score<>80|空
 使用LIKE判断相似|name LIKE 'ab%' name LIKE '%bc%'|%表示任意字符
+60~90(包含边界)输入操作
+   - WHERE score>=60 AND score <=90
+   - WHERE score BETWEEN 60 AND 90
+   -  注意：WHERE  60<=score<=90 代表OR 操作。
+### 投影查询
+使用SELECT \*可以返回所有列，但是使用`SELECT 列1，列2，列3`等则可以返回指定列,这种操作称之为投影。
+如果我们只需要返回某些列的数据，而不是所有的数据，可以使用`SELECT 列1，列2，列3 FROM...`，让结果集 仅包含指定列，称为投影查询。
+结果集的列的顺序可以和原表不一致；
+在投影查询中可以给每一个列起一个别名，这样结果集的列名和原表的就会不同。如：
+```
+SELECT 列1 别名1，列2 别名2，列3 别名3 FROM ...
+```
+同样投影查询可以使用WHERE  条件句实现复杂查询。
+### 排序
+使用SELECT 查询时，结果集通常以主键进行排序，也可以通过`ORDER BY`对其他条件进行从低到高ASC升序排序。
+可以加上DESC 使得结果集从高到低排序
+```
+SELECT id,name,gender,score FROM students ORDER BY score DESC;
+```
+如果score 有相同的数据，可以继续添加列名进一步排序，使用
+```
+SELECT id,name,gender,score FROM students ORDER BY score DESC,gender;
+```
+首先按照score降序排列，若score 相同，使用gender排序；
+如果需要WHERE 条件句，则ORDER BY 子句要放在WHERE 条件句之后。
+### 分页查询
+分页实际上就是从结果集中截取M~N条记录，可以通过
+`LIMIT <M> OFFSET <N>`字句实现。
+分页查询关键在于确定每页要显示的结果数量，pageSize，然后根据当前页的索引pageIndex，确定LIMIT 和OFFSET应设定的值。
+`LIMIT M` 表示每页最多M条记录，总是设定为pageSize
+`OFFSET `计算公式为pageSize*(pageIndex-1),OFFSET 是可选的，若省略，则相当于OFFSET 0结果集从0开始
+MySQL中，`LIMIT 15 OFFSET 30`可写为`LIMIT 30,15`
+OFFSET 即表明从哪一条记录开始查询，N越大，查询效率越低。
+分页查询需要确定每页的数量和当前的页数。
+**SQL记录集的索引是从0开始的**
+```
+SELECT id,name,gender,score
+FROM students
+WHERE score>=70  条件语句
+ORDER BY score DESC  排序语句
+LIMIT 3 OFFSET    分页查询语句
+```
+### 聚合查询
+统计一张表的数据量使用SQL内置的`COUNT()`查询。
+```
+SELECT COUNT(*) FROM students;
+```
+COUNT(\*)表示查询所有列的行数，计算结果仍是一个二维列表，列表名为COUNT(\*)；也可设置别名
+```
+SELECT COUNT(*) num FROM students；
+```
+SQL提供的聚类函数
+函数|说明
+---------|---------
+SUM|计算某一列的合计值，必须 为数据类型
+AVG|计算某一类的平均值，必须为数值类型
+MAX|计算某一列的最大值
+MIN|计算某一列的最小值
+`MAX()`和 `MIN()`函数可用于数值类型和字符字符类型，若是字符类型，则返回排序最后和最前的值。
+若在聚合查询中，没有匹配`WHERE 条件句`，`COUNT()`返回0，`SUM()`,`AVG()`,`MAX()`,`MIN()`返回NULL。
+每页3条记录，获取总页数,页数 不是3的倍数
+```
+SELECT CEILING(COUNT(*)/3) FROM students; 最后一页不足3条记录，页数为FLOOR(COUNT(*)/3)+1
+```
+#### 分组
+SQL提供`GROUP BY`字句指定分组，进行分组聚合
+```
+SELECT class_id,gender,COUNT(*) num FROM students GROUP BY class_id,gender;
+```
+### 多表查询
+查询多表的语法：
+```
+SELECT * FROM <表1>，<表2>
+```
+结果集也是一个二维表，是表1和表2的乘积，也即是表1 的每一行和表2的每一行两两组合在一起返回，结果集的**行数是表1和表2的行数之积，列数是表1和表2列数之和**。这种查询又称之为笛卡尔查询。
+可通过**投影查询的设置列的别名的方式**来给两个表自己的列起别名，以便于区分
+```
+SELECT 
+students.id sid,
+students.name,
+students.gender,
+students.score,
+classes.id sid,
+classes.name cname
+FROM students,classes;
+```
+多表查询时，要使用`表名.列名`的方式引用列和设置别名，避免结果集的的列名重复，SQL还允许给表设置别名
+```
+SELECT
+s.id sid,
+s.name,
+s.gender,
+s.score,
+c.id cid,
+c,name cname
+FROM students s,classes c 分别给表设置别名。
+WHERE s.gender='M' AND c.id=1;  WHERE 条件语句
+```
+### 连接查询
+对多个表进行JOIN运算,先确定一个主表，将其他表的行有选择的连接到主表上
+内连接 `INNER JOIN` 是选出两张表都存在的记录
+<div align="center"><img src=E:/SQL/内连接.jpg  width="100px" height="100px">
+</div>
+<!--![内连接](E:/SQL/内连接.jpg)-->
+
+`LEFT OUTER JOIN` 选出左表存在的记录
+ <div align="center"><img src=E:/SQL/左外连接.jpg  width="100px" height="100px">
+</div>
+
+`RIGHT OUTER JOIN` 返回右表存在的记录，若某一行仅在右表出现，则结果集以`NULL`填充剩下的字段
+ <div align="center"><img src=E:/SQL/右外连接.jpg  width="100px" height="100px">
+</div>
+
+`FULL OUTER JOIN` 左表或右表存在的记录全部选择出来，自动把对方不存在的列填充为`NULL`
+ <div align="center"><img src=E:/SQL/全外连接.jpg  width="100px" height="100px">
+</div>
+
+`INNER JOIN`是一种常用的JOIN 查询，语法：
+```
+SELECT ...FROM <表1> INNER JOIN <表2> ON <条件...>;
+```
+
+写法：
+1. 先确定主表，使用`FROM <表1>`的写法
+2. 再确定需要连接的表，使用`INNER JOIN<表2>`语法
+3. 确定连接条件，使用`ON <条件...>`,如条件`s.class_id=c.id` 表示`students`表的`class_id`列与`classes`表的`id`列相同行进行连接
+4. 也可以使用`WHERE` 和`ORDER BY`排序。
