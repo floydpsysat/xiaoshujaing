@@ -358,3 +358,39 @@ SELECT ...FROM <表1> INNER JOIN <表2> ON <条件...>;
 2. 再确定需要连接的表，使用`INNER JOIN<表2>`语法
 3. 确定连接条件，使用`ON <条件...>`,如条件`s.class_id=c.id` 表示`students`表的`class_id`列与`classes`表的`id`列相同行进行连接
 4. 也可以使用`WHERE` 和`ORDER BY`排序。
+## 修改数据
+ 关系数据库的基本操作，增删改查，create、retrieve、delete
+ - INSERT:插入新记录
+ - UPDATE:更新记录
+ - DELETE:删除已有记录
+### INSERT
+基本语法：
+```
+INSERT INTO <表名>（字段1，字段2......） VALUES(值1，值2，......)
+```
+插入时，字段顺序不必和数据库表的字段顺序一致，但是**值的顺序必须和字段顺序一致**
+可一次性添加多个记录，只需要在VALUES 中指定多个记录值即可，每个记录是由（......）包括的一组值
+```
+INSERT INTO students (calss_id,name,gender,score) VALUES  (2,"大宝"，"M",80),
+(1,"二宝"，"M",81);增加记录
+SELECT *  FROM students;查询表单所有记录
+```
+### UPDATE
+基本语法
+```
+UPDATE <表名> SET 字段1=值1，字段2=值2，...WHERE ...;
+```
+`WHERE`条件句中写出需要更新的行筛选条件，如`id=1`
+`UPDATE`语句中，更新字段时，也可以使用表达式，如：`SET score=score+10`
+`UPDATE`语句若没有`WHERE`条件句，则全表更新
+### DELETE
+基本语法：
+```
+DELETE FROM <表名> WHERE...;
+```
+若没有使用`WHERE`条件句，则会删除整个表
+## MySQL
+命令行提示符中，输入`mysql -u root -p`输入口令后，连接上MySQL server。输入`exit`即断开连接，返回命令提示符
+MySQL client中输入的SQL语句是通过 TCP连接发送到MySQL server ，默认端口3306，若发送至本机的MySQL server，地址 为`127.0.0.1:3306`
+若连接至远程的MySQL server，即可用-p指定ip地址，如
+`mysql -h 10.0.1.99 -u root -p`
