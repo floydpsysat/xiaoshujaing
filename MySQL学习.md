@@ -394,3 +394,65 @@ DELETE FROM <表名> WHERE...;
 MySQL client中输入的SQL语句是通过 TCP连接发送到MySQL server ，默认端口3306，若发送至本机的MySQL server，地址 为`127.0.0.1:3306`
 若连接至远程的MySQL server，即可用-p指定ip地址，如
 `mysql -h 10.0.1.99 -u root -p`
+ 登录MySQL server:
+ - 进入命令行提示符，切换至安装目录下
+ - 进入安装目录的bin文件下
+ - 启动MySQL server `net  start mysql`
+ - 连接服务器 `mysql -u root -p`
+ - 输入登录口令，即进入mysql命令行
+MySQL库命令：
+- 列出数据库 `SHOW DATABASES`;
+	- `information_schema`,`mysql`,`performance_schema`,`sys`是系统库
+- 创建新的数据库 `CREATE DATABASE 数据库名称`
+- 删除数据库  `DROP DATABASE 数据库名称`
+	- 删除数据库，，会删除该数据库所有的表
+- 对数据库进行操作时，首先切换至该数据库 `USE 数据库名称`
+### MySQL表
+-  列出当前数据库的所有表  `SHOW TABLES`;
+- 查看表的结构 `DESC 表的名称`
+- 查看创建表的SQL语句 `SHOW CREATE TABLE 表的名称`
+- 创建表 `CREATE TABLE`
+- 删除表 `DROP TABLE`
+- 修改表 若要新增一列
+```
+ALTER TABLE students ADD COLUMN birth VARCHAR(10) NOT NULL; 为表students新增一列 birth
+```
+若要修改`birth`列，改为`birthday`，类型为VARCHAR(20)
+```
+ALTER TABLE students CHANGE COLUMN birth birthday VARCHAR(20) NOT NULL;
+```
+- 删除列 
+`ALTER TABLE students DROP COLUMN birthday`；删除birthday一列
+- 退出MySQL `EXIT`，需要注意的是使用EXIT仅仅断开client 与server的连接，MySQL服务器依然运行
+- **替换插入** 插入一条新记录，若记录存在，则删除原记录，再插入新纪录，使用`REPLACE`语句
+```
+REPLACE INTO students (id, class_id,name,gender,score)	VALUE(1,1,	'小明','F',O99)
+```
+若id=1记录不存在，直接插入，若存在，删除原来的记录，再插入
+- **更新插入** 插入一条新记录，若记录存在，就更新该记录`INSERT INTO ...ON DUPLICATE KEY UPDATE ...`语句
+```
+INSERT INTO students （id,class_id,name,gender,score）VALUES (1,1,'小明'，‘M’，90) ON DUPLICATE KEY UPDATE name='小李'，gender='M'，score=99；
+```
+- **忽略性插入** 插入一条记录，过记录存在，则忽略，使用`INSERT IGNORE INTO...`
+```
+INSERT IGNORE INTO students（id,name,gender,clsss_id,score） VALUES(1,'小明'，'M',1,89);
+```
+- **快照** 若想讲一份表复制当前数据到另个新表，可以结合使用`CREATE TABLE `和`SELECT`。
+```
+CREATE TABLE students_of_class1 SELECT * FROM students WHERE class_id=1;d对class_id=1的记录进行快照，将其存储为新表
+```
+- **写入插入结果集**将结果集写入到表格中，使用`INSERT INTO`、 `SELECT`等语法
+创建新表
+```
+CREATE TABLE statistics (
+		id BIGINT NOT NULL ATUO_INCREMENT,
+		class_id BIGINT NOT NULL,
+		average DOUBLE NOT NULL,
+		PRIMARY KEY(id)
+);
+```
+写入结果集
+```
+INSERT INTO statistics (class_id,average) SELECT class_id,AVG(score) FROM students GROUP BY class_id;
+```
+
