@@ -1,6 +1,6 @@
 ---
-title: 2019-4-25未命名文件 
-tags: 新建,模板,小书匠
+title: Python学习
+tags: python
 grammar_cjkRuby: true
 ---
 
