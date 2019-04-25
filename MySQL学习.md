@@ -215,10 +215,10 @@ WHERE 后面即为条件，条件查询的语法为：
 ```
 SELECT * FROM <表名> WHERE <条件表达式>
 ```
-- 条件表达式可以为 <条件1> AND <条件2> 表示同时满足两个条件；
-- 条件表达式可以为<条件1> OR <条件2> 表示满足任一个条件即可；
-- NOT <条件> 表示不符合该条件的记录
-NOT class_id=2 等价于class_id <> 2
+- 条件表达式可以为 <条件1>` AND` <条件2> 表示同时满足两个条件；
+- 条件表达式可以为<条件1> `OR `<条件2> 表示满足任一个条件即可；
+-` NOT` <条件> 表示不符合该条件的记录
+`NOT class_id=2` 等价于class_id <> 2
 若是有3个以上的条件，使用小括号()表示如何进行条件运算。
 运算优先级：NOT>AND>OR;但是加上括号可以改变运算顺序。
 #### 常用表达式
@@ -229,12 +229,23 @@ NOT class_id=2 等价于class_id <> 2
 \>|name>'abc'|
 <=|小于等于
 >=|大于等于
-使用<>判断不相等|name<>'abc'  score<>80|空
+使用<> 不等于  |name<>'abc'  score<>80|空
 使用LIKE判断相似|name LIKE 'ab%' name LIKE '%bc%'|%表示任意字符
+IN|为字段指定多个可能的值|IN(column1,column2,...)
 60~90(包含边界)输入操作
    - WHERE score>=60 AND score <=90
    - WHERE score BETWEEN 60 AND 90
    -  注意：WHERE  60<=score<=90 代表OR 操作。
+#### SELECT DISTINCT
+`SELECT DISTINCT`  statement  used to return only distinct (different) values.
+syntax:
+```
+SELECT DISTINCT column1,column2,...FROM table_name
+```
+计算某个字段中不同的值的数目
+```
+SELECT COUNT(DISTINCT column) FROM table_name
+```
 ### 投影查询
 使用SELECT \*可以返回所有列，但是使用`SELECT 列1，列2，列3`等则可以返回指定列,这种操作称之为投影。
 如果我们只需要返回某些列的数据，而不是所有的数据，可以使用`SELECT 列1，列2，列3 FROM...`，让结果集 仅包含指定列，称为投影查询。
@@ -255,6 +266,8 @@ SELECT id,name,gender,score FROM students ORDER BY score DESC;
 SELECT id,name,gender,score FROM students ORDER BY score DESC,gender;
 ```
 首先按照score降序排列，若score 相同，使用gender排序；
+也可以升序和降序同时运用
+`SELECT * FROM table_name ORDER BY column1 ASC,column2 DESC` 先按照column1升序排列，若column1中的value相同，则再按照column2降序排列
 如果需要WHERE 条件句，则ORDER BY 子句要放在WHERE 条件句之后。
 ### 分页查询
 分页实际上就是从结果集中截取M~N条记录，可以通过
