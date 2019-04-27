@@ -389,14 +389,16 @@ INSERT INTO students (calss_id,name,gender,score) VALUES  (2,"大宝"，"M",80),
 SELECT *  FROM students;查询表单所有记录
 ```
 ### UPDATE
+用于对表中已存在的数据进行更改
 基本语法
 ```
-UPDATE <表名> SET 字段1=值1，字段2=值2，...WHERE ...;
+UPDATE <表名> SET 字段1=值1，字段2=值2，...WHERE  condition(条件语句);
 ```
 `WHERE`条件句中写出需要更新的行筛选条件，如`id=1`
 `UPDATE`语句中，更新字段时，也可以使用表达式，如：`SET score=score+10`
 `UPDATE`语句若没有`WHERE`条件句，则全表更新
 ### DELETE
+用于删除表中已经存在的记录
 基本语法：
 ```
 DELETE FROM <表名> WHERE...;
@@ -446,6 +448,7 @@ REPLACE INTO students (id, class_id,name,gender,score)	VALUE(1,1,	'小明','F',O
 ```
 INSERT INTO students （id,class_id,name,gender,score）VALUES (1,1,'小明'，‘M’，90) ON DUPLICATE KEY UPDATE name='小李'，gender='M'，score=99；
 ```
+若是为表中所有的字段插入数据，则不需要特别指出字段的名字。
 - **忽略性插入** 插入一条记录，过记录存在，则忽略，使用`INSERT IGNORE INTO...`
 ```
 INSERT IGNORE INTO students（id,name,gender,clsss_id,score） VALUES(1,'小明'，'M',1,89);
@@ -454,7 +457,7 @@ INSERT IGNORE INTO students（id,name,gender,clsss_id,score） VALUES(1,'小明'
 ```
 CREATE TABLE students_of_class1 SELECT * FROM students WHERE class_id=1;d对class_id=1的记录进行快照，将其存储为新表
 ```
-- **写入插入结果集**将结果集写入到表格中，使用`INSERT INTO`、 `SELECT`等语法
+	- **写入插入结果集**将结果集写入到表格中，使用`INSERT INTO`、 `SELECT`等语法
 创建新表
 ```
 CREATE TABLE statistics (
@@ -468,4 +471,34 @@ CREATE TABLE statistics (
 ```
 INSERT INTO statistics (class_id,average) SELECT class_id,AVG(score) FROM students GROUP BY class_id;
 ```
+## SQL NULL values
+某个字段的值为NULL ，并不是说为0或space，是指在创建的时候为blank。
+测试某个字段的值是否为NULL ，使用`IS NULL` 和`IS NOT NULL`操作符。
+格式：
+```
+SELECT column_name
+FROM table_name 
+WHERE column_name IS NULL;
+```
+```
+SELECT column_name
+FROM table_name 
+WHERE column_name IS NOT NULL;
+```
+SELECT TOP语句用于指定返回的结果的数值。对于不同的数据库系统，也具有不同的语法规则
+SQL server/MS Access:
+```
+SELECT TOP number\PERCENT column_name FROM table_name WHERE condition;
+```
+`SELECT TOP 3 * FROM customers;`
+`SELECT TOP 50 PERCENT * FROM customers;`
+MySQL：
+```
+SELECT column_name FROM table_name WHERE condition LIMIT number;
+```
+Oracle:
+```
+SELECT column_name FROM table_name WHERE ROWNUM<=number;
+```
+
 
