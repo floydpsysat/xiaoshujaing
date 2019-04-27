@@ -298,10 +298,10 @@ SELECT COUNT(*) num FROM students；
 SQL提供的聚类函数
 函数|说明
 ---------|---------
-SUM|计算某一列的合计值，必须 为数据类型
-AVG|计算某一类的平均值，必须为数值类型
-MAX|计算某一列的最大值
-MIN|计算某一列的最小值
+SUM()|计算某一列的合计值，必须 为数据类型
+AVG()|计算某一类的平均值，必须为数值类型
+MAX()|计算某一列的最大值
+MIN()|计算某一列的最小值
 `MAX()`和 `MIN()`函数可用于数值类型和字符字符类型，若是字符类型，则返回排序最后和最前的值。
 若在聚合查询中，没有匹配`WHERE 条件句`，`COUNT()`返回0，`SUM()`,`AVG()`,`MAX()`,`MIN()`返回NULL。
 每页3条记录，获取总页数,页数 不是3的倍数
@@ -500,5 +500,25 @@ Oracle:
 ```
 SELECT column_name FROM table_name WHERE ROWNUM<=number;
 ```
-
-
+#### LIKE operator
+有两个通配符wildcard:%,_
+% 代表任意数个字符
+\_下划线代表单个字符
+**MS Access** 中：
+使用* 代表任意数个字符
+使用？代表单个字符
+```
+SELECT column1,column2 FROM table_name WHERE columnN LIKE pattern
+```
+若是不相似的情况下，使用**NOT LIKE**
+#### 通配符 wildcard characters
+**MS Access**:
+符号|描述|示例
+----|----|----
+*|代表任意个字符|bl* 可以表示为bl,black,blue等
+?|代表单个字符|h?t 可表示为hot,hit,hat等
+[]|代表括号内的任意字符|h[oa]t 可以表示是hot或者hat,不能是hit
+!|代表不在括号内的任意字符|h[!oa]t不能是hot或者hat,可以是hit
+_|	代表一系列数值|c[a-b]t 代表cat和cbt
+#|代表单个数字字符|2#5，可以表示为205,215,225,235....295
+**SQL server**
