@@ -521,4 +521,32 @@ SELECT column1,column2 FROM table_name WHERE columnN LIKE pattern
 !|代表不在括号内的任意字符|h[!oa]t不能是hot或者hat,可以是hit
 _|	代表一系列数值|c[a-b]t 代表cat和cbt
 #|代表单个数字字符|2#5，可以表示为205,215,225,235....295
-**SQL server**
+
+**SQL server**：
+符号|描述
+----|----
+%|代表任意个字符
+\_|代表单个字符
+\[]|括号内的任意的单个字符
+^(shift+6)|代表不在括号内的任意字符
+-|代表一系列的字符
+#### IN操作符
+用于指定WHERE 语句中的多个值 ，是多个OR运算符的简写
+```
+SELECT column_name(s) FROM table_name WHERE column_name IN (value1,calue2,...);
+```
+```
+SELECT column_name(s) FROM table_name WHERE column_name IN(SELECT  STATEMENT);
+```
+若不在指定的多个值中，使用`NOT IN`
+示例`SELECT STATEMENT`
+```
+SELECT * FROM Customers WHERE Country IN(SELECT Country FROM Suppliers);在WHERE 条件句中使用另外一个表
+```
+#### BETWEEN  operator
+`BETWEEN` 操作符用于在给定的范围内进行选择,这个值可以是数字、文本、日期，它是包含开始值和结束值
+```
+SELECT column_name(s) FROM table_name WHERE column_name BETWEEN value1 AND value2;
+SELECT * FROM Products WHERE ProductName BETWEEN 'carnarvon'AND 'mozzarella' ORDER BY ProductName; 文本操作
+SELECT * FROM Orders WHERE orderDate BETWEEN #01/07/1996# AND #31/07/1996#;或者('1996-07-01' AND '1996-07-31';) 日期操作 
+```
