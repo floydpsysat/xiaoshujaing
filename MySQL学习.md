@@ -550,3 +550,36 @@ SELECT column_name(s) FROM table_name WHERE column_name BETWEEN value1 AND value
 SELECT * FROM Products WHERE ProductName BETWEEN 'carnarvon'AND 'mozzarella' ORDER BY ProductName; 文本操作
 SELECT * FROM Orders WHERE orderDate BETWEEN #01/07/1996# AND #31/07/1996#;或者('1996-07-01' AND '1996-07-31';) 日期操作 
 ```
+#### SQL Aliases 
+用于给表或者表中的字段取一个临时别名，使得字段更加易读，仅在查询的时候存在
+Alias Column syntax:
+```
+SELECT column_name AS alias_name FROM table_name;
+```
+Alias table syntax
+```
+SELECT column_anme FROM table_name AS alias_name;
+```
+如果引用的别名中带有空格，则需要`double quotation marks`或者 `square brackets`
+```
+SELECT customer_name AS Customer,Contact_naem AS [Contact person] FROM table_name;
+```
+SQL statement
+```
+SELECT customer_name,adress+','+postalcode+''+city+','+country AS adress
+```
+MySQL statement：
+```
+SELECT customer_name,CONCAT(adress,',',postalcode,',',city,',',country) AS Adress FROM customers;
+```
+表的别名用法
+```
+SELECT o.orderID,o.orderDate,c.customerName FROM customers AS c,orders AS o WHERE c.customerName='aoround the horn' AND c.customerID=o.customerID;
+```
+别名的用法：
+ - 用于多个表格的查询中
+ - 查询中使用了函数
+ - 字段的名字很长或者不宜读
+ - 多个字段混合使用
+#### SQL JOIN
+SQL 语句基于相同的字段，用来联合多个表格
