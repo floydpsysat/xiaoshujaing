@@ -581,5 +581,101 @@ SELECT o.orderID,o.orderDate,c.customerName FROM customers AS c,orders AS o WHER
  - 查询中使用了函数
  - 字段的名字很长或者不宜读
  - 多个字段混合使用
+ - 定义别名时，关键词`AS`可以省略不写
 #### SQL JOIN
 SQL 语句基于相同的字段，用来联合多个表格
+#### SQL INNER JOIN
+用于选择在两个表中都match的记录
+```
+SELECT o.OrderID, c.CustomerName, s.ShipperName
+FROM ((Orders o
+INNER JOIN Customers c ON o.CustomerID = c.CustomerID)
+INNER JOIN Shippers s ON o.ShipperID = s.ShipperID);别名定义时，关键词AS可以省略掉不写
+```
+#### SQL LEFT JOIIN(LEFT OUTER JOIN)
+the LEFT JOIN keyword returns all records  from the left table(table1),and the matched records from the right table(table2). the result is NULL  from the right table ,if there is no match.
+#### SQL RIGHT JOIN(RIGHT OUTER JOIN)
+The RIGHT JOIN keyword returns all records from the right table(table2),and the matched records from the left table(table1).The result is NULL from the left side,if there is no match.
+#### SQL FULL OUTER JOIN(FULL JOIN)
+The FULL OUTER JOIN keyword return all records  when there is a match  in either left or  right table records.
+#### SQL Self 	Join
+a self join is a regular join,but the table is joined with itself.
+```
+SELECT column_name FROM table1 T1 ,table1 T2 WHERE CONDITION;
+```
+T1 T2是同一个表的不同别名
+示例：
+```
+SELECT A.CustomerName AS CustomerName1,B.CustomerName AS CustomerName2,A.City  
+FROM Customers A,Customers B
+WHERE A.CustomerID <> B.CustomerID
+AND A.City=B.City 
+ORDER BY A.City;
+```
+#### SQL UNION 
+UNION将两个或多个SELECT语句的结果集组合到一起。
+- 每一个SELECT语句必须具有相同数量的字段
+- 字段的数据类型必须相同
+- 每一个SELECT语句字段顺序必须一致
+- 结果集的字段名字通常和UNION字段第一个SELECT语句中表的名字相同。 
+UNION默认 筛选不同的值，若是允许相同，可以使用`UNION ALL`。
+```
+SELECT column_name(s) FROM table1 WHERE CONDITION
+UNION (UNION ALL)
+SELECT column_name(s) FROM table2 WHERE CONDITION;
+```
+EXAMPLE:
+```
+SELECT 'Customer' As Type, ContactName, City, Country
+FROM Customers
+UNION
+SELECT 'Supplier', ContactName, City, Country
+FROM Suppliers结果集的名字和第一个SELECT语句的字段名字相一致
+```
+#### GROUP BY
+GROUP BY 语句通常和聚合查询函数(COUNT,SUM,MIN,MAX,AVG)一起使用，通过一个或多个字段对结果集进行组合
+```
+SELECT column_name(s) FROM table_name
+WHERE CONDITON
+GROUP BY column_name(s)
+ORDER BY column_name(s);
+```
+`GROUP BY` WITH `JOIN` EXAMPLE
+```
+SELECT Shippers.ShipperName,COUNT(Orders.OrderID) AS NumberOfOrders FROM Orders
+LEFT JOIN Shippers ON Orders.ShipperID = Shippers.ShipperID
+GROUP BY ShipperName;
+```
+#### SQL HAVING
+WHERE 关键词不能使用聚合函数，由HAVING 语句
+```
+SELECT column_name(s)
+FROM table_name
+WHERE CONDITION
+GROUP BY column_name(s)
+HAVING  CONDITION
+ORDER BY column_name(s);
+```
+示例分析：
+```
+SELECT Employees.LastName, COUNT(Orders.OrderID) AS NumberOfOrders
+FROM (Orders
+INNER JOIN Employees ON Orders.EmployeeID = Employees.EmployeeID)
+GROUP BY LastName
+HAVING COUNT(Orders.OrderID) > 10;
+--------------------
+SELECT o.EmployeeID, COUNT(o.OrderID), e.LastName AS Name
+FROM Orders o
+INNER JOIN Employees e ON o.EmployeeID=e.EmployeeID
+GROUP BY  Name
+HAVING COUNT(o.OrderID)>10
+ORDER BY COUNT(o.OrderID);
+```
+#### SQL EXISTS
+EXISTS 用于检测子查询中记录是否存在，若子查询结果集返回一条或多记录，则返回真
+```
+SELECT column_name(s)
+FROM table_name
+WHERE EIXTS
+(SELECT column_name FROM table_name WHERE CONDITION);
+```
