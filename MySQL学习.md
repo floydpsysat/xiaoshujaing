@@ -822,3 +822,91 @@ SELECT * FROM Customers -- WHERE City="Berlin";
 可以用于多行注释 ，也可以用于单一行中语句的注释
 
 ## SQL database
+#### SQL CREATE DB 创建数据库
+`CREATE DATABASE  databasename;`
+查看数据库信息：
+`SHOW DATABASES;`
+#### SQL DROP DB 删除现有的数据库
+`DROP DATABASE databasename；`
+删除数据库将会丢失存储在数据库中的完整的信息
+#### SQL BACKUP DB for SQL server
+在SQL server中使用BACKUP DATABASE语句创建现有数据库的完整备份
+`BACKUP DATABASE databasename TO DISK='filepath';`
+SQL BACKUP WITH DIFFERENTIAL statement
+差异备份仅备份字上次完全数据库备份以来更改的数据库部分
+```
+BACKUP DATABASE databasename
+TO DISK='filepath'
+WITH  DIFFERENTIAL;
+```
+__EX__:
+```
+BACKUP DATABASE testDB
+TO DISK='D:\backups\testDB.bak'
+WITH DIFFERENTIAL;
+```
+#### SQL CREATE TABLE
+用于在数据库中创建新表
+```
+ CREATE TABLE tablename(
+ 		column1 datatype,
+		column2 datatype,
+		column3 datatype,
+		....
+		);
+```
+使用已有表来创建新表，新表中的值将由原先的表值填充
+```
+CREATE TABLE new_tablename AS
+SELECT column1,column2,...
+FROM existing_table_name
+WHERE....;
+```
+####  SQL DROP TABLE
+删除已数据库中已经存在的表
+`DROP TABLE tablename`
+##### SQL TRUNCATE TABLE
+用来删除表中的数据，而非表本身
+#### SQL ALTER TABLE
+ALTER TABLE语句用来add、delete、modify已存在的表格的字段，也用来add、drop已存在表格的各种约束
+```
+ALTER TABLE tablename
+ADD column_name datatype;添加字段
+DROP COLUMN  column_name;删除表格中的字段
+```
+更改表格中字段的数据类型
+SQL server/ MS Access:
+```
+ALTER TABLE table_name
+ALTER COLUMN column_name datatype;
+```
+MySQL/Oracle
+```
+ALTER TABLE table_name
+MODIFY COLUMN column_name datatype;
+```
+__EX__:
+```
+ALTER TABLE tablename
+ADD BirthOfDate date;日期的数据类型为date
+```
+SQL Constraints
+为表中的数据指定规则,可以在CREATE TABLE时指定约束条件或者在表格创建后ALTER TABLE时指定
+```
+CREATE TABLE tablename(
+		column1 datatype constraint,
+		column2 datatype constraint,
+		column3 datatype constraint,
+		...
+	);	
+```
+#### SQL commonly  constraints常见的约束条件
+constraint|explaination
+----|----
+NOT NULL|确保字段值不为NULL
+UNIQUE|确保字段中的所有值是不同的
+PRIMARY KEY|NOT NULL 和UNIQUE的组合，唯一标示表中的每一行
+FOREIGN KEY|唯一标示另一个表中的行或者记录
+CHECK|确保字段中所有值满足约束条件
+DEFAULT|为没有明确指明值得字段设定一个默认值
+INDEX|用于很快的从数据库中创建和检索数据
