@@ -648,6 +648,7 @@ GROUP BY ShipperName;
 ```
 #### SQL HAVING
 WHERE 关键词不能使用聚合函数，由HAVING 语句
+the having clause was added to SQL because the WHERE keyword could not  be used with aggretate functions
 ```
 SELECT column_name(s)
 FROM table_name
@@ -679,3 +680,145 @@ FROM table_name
 WHERE EIXTS
 (SELECT column_name FROM table_name WHERE CONDITION);
 ```
+#### SQL ANY and ALL
+ANY 与ALL 与WHERE ,HAVING 语句中使用
+ANY 返回true，如果任一子查询结果符合给定的条件
+ALL 返回true，如果所有的子查询结果符合给定的条件
+ANY:
+```
+SELECT column_name(s) FROM table_name
+WHERE column_name operator ANY
+(SELECT column_name FROM table_name WHERE condition);
+```
+ALL:
+```
+SELECT  column_name(s) FROM table_name
+WHERE column_name operator ALL
+(SELECT column_name FROM table_name WHERE condition);
+```
+operator 包括=,>,<,>=,<=,<>,!=
+__EX__:
+```
+SELECT ProductName FROM Products
+WHERE ProductID =ALL(ANY)
+(SELECT ProductID FROM OrderDetails WHERE Quantity>90);
+```
+#### SQL SELECT INTO
+select into statement copies data from one table into a new table.
+```
+SELECT *(column1,column2...) INTO newtable [IN externaldb]
+FROM oldtable 
+WHERE condition;
+```
+newtable将会根据oldtable中的字段名和type创建，当然也可以使用AS 语句创建别名
+```
+SELECT  * INTO CustomerBckup IN 'Backup.db'
+FROM Customers;从其他的数据库中copy数据
+```
+SELECT  INTO 语句可以用来创建一个新的空表格，只需要 WHERE 语句不返回结果
+```
+SELECT * INTO newtable FROM oldtable WHERE 1==0;
+```
+#### SQL INSERT INTO SELECT
+INSERT INTO SELECT statement 从一个表格复制数据到另一个表格
+		- 要求源表和目的表的数据类型想匹配
+		- 目的表已经存在的记录不受影响
+```
+INSERT INTO table2 (column1,column2,column3...)
+SELECT * (column1,column2,column3...) FROM table1
+WHERE condition;
+```
+__EX__:
+```
+INSERT INTO Customers(CustomerName,City,Country)
+SELECT SupplierName,City,Country FROM Suppliers
+WHERE Country='German';
+```
+#### SQL CASE
+			- CASE 语句遍历条件，并且当在第一个条件被满足时返回一个值（如IF-THEN-ELSE语句），因此，一旦条件成立，将停止读取并且返回结果，若遍历所有的条件都不满足，则返回ELSE 语句中的值。
+			- 若是没有ELSE 语句且所有条件均不成立，返回NULL
+```
+CASE
+		WHEN condition1	THEN result1
+		WHEN condition2 THEN result2
+		WHEN conditionN THEN resultN
+		ELSE result
+END;
+```
+__EX__:
+```
+SELECT OrderID,Quantity,
+CASE
+		WHEN Quantity>30 THEN "the quantity is greater than 30"
+		WHEN Quantity=30 THEN "the quantity is equal 30	"
+		ELSE "the quantity is under 30"
+END AS QuantityText
+FROM Orderdetails;
+```
+```
+SELECT CustomerName ,City,Country
+FROM Customers
+ORDER BY
+		（CASE
+					WHEN City IS NULL THEN Country
+					ELSE City
+		END）;
+```
+#### SQL NULL FUNCTION
+SQL` IFNULL()`,`ISNULL()`,	`COALESEC()`,`NVL()`functions
+MYSQL:当一个表达为NULL 时，MySQL的`IFNULL()`允许返回一个可选的值
+```
+SELECT ProductName,Unitprice*(UnitsInstock+IFNULL(UnitsOnOrder,0))
+FROM Products;其中假定UnitsOnOrder 可以为NULL
+```
+或者可以用`COALESEC()`替换`IFNULL`
+SQL server中，可以使用`ISNULL()` 
+MS Access中，可以使用`IsNull()`,当表达为NULL时，返回TRUE(-1),	其他则返回FALSE(0)
+```
+SELECT ProductName,Unitsprice*(UnitsInStock+IIF(IsNull(UnitsOnOrder),0,UnitsOnOrder))
+FROM Products;
+```
+Oracel中使用`NVL()`可以达到同样的结果
+```
+SELECT ProductName,Unitsprice*(UnitsInStock+NVL(UnitsOnOrder,0))
+FROM Products;
+```
+#### SQL Stored	Procedures for SQL Server
+存储过程(stored procedures)是您可以保存的准备好的SQL代码，因此代码可以反复重用。 
+如果您有一个反复编写的SQL查询，请将其另存为存储过程，然后调用它来执行它。 
+还可以将参数传递给存储过程，以便存储过程可以根据传递的参数值进行操作。
+Stored a Procedure
+```
+CREATE PROCEDURE procedure_name
+AS
+sql_statement 这是SQL操作语句
+GO;
+```
+Execute a procedure
+```
+EXEC procedure_name;
+```
+存储带有多个参数的stored procedure
+```
+CREATE PROCEDURE SelectAllCustomers @City nvarchar(30),@Postalcode nvarchar(10)
+AS
+SELECT * FROM Customers 
+WHERE City=@City AND Postalcode=@Postalcode
+GO;
+```
+执行stored procedure
+```
+EXEC SelectAllCustomers City="London",Postalcode="WA1 1DP";
+```
+#### SQL Comments
+注释用于解释SQL语句的各个部分，或用于防止执行SQL语句。
+单行注释:
+单行注释开始于"--",结束于这一行的末端，中间的SQL语句不被执行
+```
+SELECT * FROM Customers -- WHERE City="Berlin";
+```
+多行注释：
+多行注释起始于"/\*"结束于"\*/",中间的所有的文本都不会执行
+可以用于多行注释 ，也可以用于单一行中语句的注释
+
+## SQL database
