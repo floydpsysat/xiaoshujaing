@@ -1001,3 +1001,32 @@ SQL/Oracle/MS Access:
 			PersonID int FOREIGN KEY REFENENCES Persons(PersonID)
 			);
 ```
+为外键约束别名
+```
+CREATE TABLE Orders (
+    OrderID int NOT NULL,
+    OrderNumber int NOT NULL,
+    PersonID int,
+    PRIMARY KEY (OrderID),
+    CONSTRAINT FK_PersonOrder FOREIGN KEY (PersonID)
+    REFERENCES Persons(PersonID)
+);
+```
+增加外键约束
+MySQL/SQL server/Oracle/MS Access：
+```
+ALTER TABLE Orders
+ADD FOREIGN KEY(PersonID) REFERENCES Persons(PersonID);添加外键约束
+ADD CONSTRAINT FK_person FOREIFN KEY(PersonID) REFERENCES Persons(PersonID);添加外键约束并别名
+```
+删除外键约束
+MySQL：
+``
+ALTER TABLE Orders
+DROP FOREIGN KEY FK_person;
+```
+SQL server/Oracle/MS Access:
+```
+ALTER TABLE Orders
+DROP CONSTRAINT FK_person;
+```
