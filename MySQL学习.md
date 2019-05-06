@@ -910,3 +910,94 @@ FOREIGN KEY|唯一标示另一个表中的行或者记录
 CHECK|确保字段中所有值满足约束条件
 DEFAULT|为没有明确指明值得字段设定一个默认值
 INDEX|用于很快的从数据库中创建和检索数据
+#### SQL NOT NULL constraint
+默认情况下，默认字段可以为NULL值
+NOT NULL 约束强制约定字段不为NULL 值
+这个约束会限制字段强制包含一个值，使得无法在不向这个字段添加新值的情况下插入或者更新记录。
+```为已经创建的表格字段添加约束
+ALTER TABLE Persons
+MODIFY Age int NOT NULL;
+```
+#### SQL UNIQUE constraint
+UNIQUE 约束确保字段所有的值都是不同的；
+UNIQUE 和PRIMARY 约束可以确保字段的唯一性；
+PRIMARY KEY 约束	自动具有UNIQUE 约束；
+每个table可以有多个UNIQUE 约束，只能有一个PRIMARY KEY 约束；
+SQL	 server/Oracle/MS Access:
+```
+CREATE  TABLE Persons(
+		ID INT NOT NULL UNIQUE,
+		LastName varchar(255) NOT NULL,
+		FirstName varchar(255),
+		Age int
+		);
+```
+MySQL：
+```
+CREATE TABLE Persons(
+		ID INT  NOT NULL,
+		LastName varchar(255) NOT NULL,
+		FirstName varchar(255),
+		Age int,
+		UNIQUE(ID)
+		);
+```
+命名UNIQUE 约束并为多个字段定义UNIQUE 约束：
+`MySQL/SQL server/Oracle/MS Access`
+```
+CREATE TABLE Persons（
+	ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    CONSTRAINT UC_Person UNIQUE (ID,LastName)）
+```
+在已创建的表格上添加约束或者删除约束
+`MySQL/SQL server/Oracle/MS Access`
+```
+ALTER TABLE Persons
+ADD CONSTRAINT UC_Person UNIQUE(ID,LastName);
+```
+MySQL：
+```
+ALTER TABLE Persons
+DROP INDEX UC_Person;
+```
+`SQL Server / Oracle / MS Access:`
+```
+ALTER TABLE Persons 
+DROP CONSTRAINT UC_Person;
+```
+#### SQL PRIMARY KEY
+PRIMARY KEY 包含UNIQUE 且不为NULL;
+一个table 只能有一个PRIMARY KEY;
+一个PRIMARY KEY 可以包含一个或多个字段；
+PRIMARY KEY 用法和UNIQUE类似，只需要替换即可。
+一点不同的是在MySQL中删除PRIMARY KEY 时：
+```
+ALTER TABLE Persons
+DROP PRIMARY KEY;
+```
+#### SQL FOREIGN KEY
+一个FOREIGN KEY 是将两个TABLE 连接起来的键
+FOREIGN KEY 是一个表中的字段或字段的集合，它引用自另一个表格中PRIMARY KEY;
+包含有外键的表称之为字表，包含有候选键的表称之为引用表或者父表；
+FOREIGN KEY 约束用来防止破坏表之间的连接；也可以限制无效数据的嵌入。它必须是指向表中包含的值
+MySQL：
+```
+CREATE TABLE Orders(
+	OrderID int NOT NULL,
+    OrderNumber int NOT NULL,
+    PersonID int,
+    PRIMARY KEY (OrderID),
+    FOREIGN KEY (PersonID) REFERENCES Persons(PersonID)
+	);
+```
+SQL/Oracle/MS Access:
+```
+	CREATE TABLE Orders(
+			OrderID INT NOT NULL PRIMARY KEY,
+			OrderNumber INT NOT NULL,
+			PersonID int FOREIGN KEY REFENENCES Persons(PersonID)
+			);
+```
