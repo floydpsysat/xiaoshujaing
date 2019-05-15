@@ -4,5 +4,18 @@ tags: python
 grammar_cjkRuby: true
 ---
 
-
-欢迎使用 **{小书匠}(xiaoshujiang)编辑器**，您可以通过 `小书匠主按钮>模板` 里的模板管理来改变新建文章的内容。
+[toc!]
+#### print（）
+print('hello','world',sep=',','!')
+print('hello','woeld',end='!\n')
+print('hello,world!')
+print('输出变量%.3f' %变量名)
+#### 运算
+a/b 浮点型
+a//b 整型 只取商
+a%b 整型 取余数
+a**b a的b次幂 a^b^
+#### type()
+检查变量类型
+print(type(变量名))
+如果代码太长，可以使用\或者()折行
